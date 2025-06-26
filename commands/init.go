@@ -1,19 +1,21 @@
 package command
 
 import (
-	"os"
-	"github.com/spf13/viper"
-	"encoding/base64"
 	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"os"
 	"path/filepath"
+
+	"github.com/spf13/viper"
 )
 
-func Init(){
-	home, _ := os.UserHomeDir();
+func Init() {
+	home, _ := os.UserHomeDir()
+	fmt.Println(home)
 	configPath := filepath.Join(home, "config.yaml")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		os.MkdirAll(configPath, 0755)
 		accesskey, _ := generateAccessKey(16)
 		viper.Set("access_key", accesskey)
 		viper.SafeWriteConfigAs(configPath)
@@ -30,5 +32,3 @@ func generateAccessKey(length int) (string, error) {
 
 	return base64.URLEncoding.EncodeToString(bytes), nil
 }
-
-
