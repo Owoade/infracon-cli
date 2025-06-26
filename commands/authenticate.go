@@ -9,11 +9,6 @@ import (
 )
 
 func Authenticate() {
-	accessKey, err := getCredentials("access_key")
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
 
 	var host, clientAccessKey string
 
@@ -24,7 +19,7 @@ func Authenticate() {
 	fmt.Scanln(&clientAccessKey)
 
 	requestBody := map[string]string{
-		"access_key": accessKey,
+		"access_key": clientAccessKey,
 	}
 
 	jsonData, _ := json.Marshal(requestBody)
@@ -53,12 +48,10 @@ func Authenticate() {
 	}
 
 	var response struct {
-		Token string`json:"token"`
+		Token string `json:"token"`
 	}
 
-	json.NewDecoder(req.Body).Decode(&response)
-
-	fmt.Println(response, resp.Body)
+	json.NewDecoder(resp.Body).Decode(&response)
 
 	if err = setCredential("client_token", response.Token); err != nil {
 		fmt.Println("Error saving token: ", err)
