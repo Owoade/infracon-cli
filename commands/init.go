@@ -3,7 +3,6 @@ package command
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,7 +11,6 @@ import (
 
 func Init() {
 	home, _ := os.UserHomeDir()
-	fmt.Println(home)
 	configPath := filepath.Join(home, "config.yaml")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {

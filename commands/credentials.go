@@ -36,7 +36,7 @@ func getCredentials(key string) (value string, err error) {
 
 func setCredential(key, value string) error {
 	home, _ := os.UserHomeDir()
-	
+
 	viper.SetConfigFile(filepath.Join(home, "config.yaml"))
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -50,4 +50,22 @@ func setCredential(key, value string) error {
 	}
 
 	return nil
+}
+
+func setProjectCredentials(key, value string) {
+
+	fmt.Println("key", key, "value", value)
+
+	viper.AddConfigPath(".")
+	viper.SetConfigName("infracon")
+	viper.SetConfigType("yaml")
+	viper.Set(key, value)
+
+	if _, err := os.Stat("infracon.yml"); os.IsNotExist(err) {
+		viper.SafeWriteConfig()
+		return
+	}
+
+	viper.WriteConfig()
+
 }

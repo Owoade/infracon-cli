@@ -53,8 +53,8 @@ func Authenticate() {
 
 	json.NewDecoder(resp.Body).Decode(&response)
 
-	if err = setCredential("client_token", response.Token); err != nil {
-		fmt.Println("Error saving token: ", err)
-	}
+	setCredential("client_token", response.Token)
+
+	setCredential("host_url", host)
 
 }

@@ -23,6 +23,8 @@ func main() {
 			if action == "init" {
 				command.Init()
 				fmt.Println("Initialized successfully")
+			} else if action == "init-project" {
+				command.InitializeProject()
 			} else if action == "credentials"{
 				command.Credentials()
 			} else if action == "authenticate" {
