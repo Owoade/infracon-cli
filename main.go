@@ -29,7 +29,13 @@ func main() {
 				command.Credentials()
 			} else if action == "authenticate" {
 				command.Authenticate()
-			} 	else {
+			} 	else if action == "upload" {
+				filePath := args[1]
+				if filePath == "" {
+					fmt.Println("Missing arg: filePath")
+				}
+				command.Upload(filePath)
+			} else {
 				fmt.Println("Welcome to Infracon go cli")
 			}
 			 

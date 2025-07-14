@@ -34,6 +34,24 @@ func getCredentials(key string) (value string, err error) {
 	return viper.GetString(key), nil
 }
 
+func getProjectCredentials(key string)(value string, err error){
+
+	viper.AddConfigPath(".")
+	viper.SetConfigName("infracon")
+	viper.SetConfigType("yaml")
+
+	if err := viper.ReadInConfig(); err != nil {
+		return "", err
+	}
+
+	if !viper.IsSet(key) {
+		return "", fmt.Errorf("value of %s is not set", key)
+	}
+
+	return viper.GetString(key), nil
+
+}
+
 func setCredential(key, value string) error {
 	home, _ := os.UserHomeDir()
 
