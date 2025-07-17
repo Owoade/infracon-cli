@@ -7,7 +7,61 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 )
+
+func contains(slice []string, item string) bool {
+	for _, v := range slice {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}
+
+func extractRelativeFilePath(cwd string, fullPath string) string {
+
+	cwdArr := strings.Split(cwd, "/")
+
+	pathArr := []string{}
+
+	for _, item := range strings.Split(fullPath, "/") {
+		if !contains(cwdArr, item) {
+			pathArr = append(pathArr, item)
+		}
+	}
+
+	return strings.Join(pathArr, "/")
+
+}
+
+func UploadAll() {
+
+	cwd, err := os.Getwd()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = filepath.Walk(cwd, func(path string, info os.FileInfo, err error) error {
+
+		if err != nil {
+			return err
+		}
+
+		relativeFilePath := extractRelativeFilePath(cwd, path)
+
+		Upload(relativeFilePath)
+
+		return nil
+
+	})
+
+	fmt.Println(err)
+
+}
 
 func Upload(filePath string) {
 
@@ -45,6 +99,12 @@ func Upload(filePath string) {
 
 	req, _ := http.NewRequest("POST", "http://localhost:2000/upload", body)
 	req.Header.Set("Content-Type", writter.FormDataContentType())
+
+	clientToken, err := getCredentials("client_token")
+	if err != nil {
+		fmt.Println(err)
+	}
+	req.Header.Set("Authorization", clientToken)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

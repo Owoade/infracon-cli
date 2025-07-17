@@ -34,6 +34,10 @@ func main() {
 				if filePath == "" {
 					fmt.Println("Missing arg: filePath")
 				}
+				if filePath == "." {
+					command.UploadAll()
+					return
+				}
 				command.Upload(filePath)
 			} else {
 				fmt.Println("Welcome to Infracon go cli")
