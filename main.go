@@ -39,6 +39,8 @@ func main() {
 					return
 				}
 				command.Upload(filePath)
+			} else if action == "connect" {
+				command.Connect()
 			} else {
 				fmt.Println("Welcome to Infracon go cli")
 			}

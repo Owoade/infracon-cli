@@ -103,6 +103,7 @@ func Upload(filePath string) {
 	clientToken, err := getCredentials("client_token")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	req.Header.Set("Authorization", clientToken)
 
