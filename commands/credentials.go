@@ -2,8 +2,11 @@ package command
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"strconv"
+	"syscall"
 
 	"github.com/spf13/viper"
 )
@@ -34,7 +37,7 @@ func getCredentials(key string) (value string, err error) {
 	return viper.GetString(key), nil
 }
 
-func getProjectCredentials(key string)(value string, err error){
+func getProjectCredentials(key string) (value string, err error) {
 
 	viper.AddConfigPath(".")
 	viper.SetConfigName("infracon")
@@ -74,16 +77,30 @@ func setProjectCredentials(key, value string) {
 
 	fmt.Println("key", key, "value", value)
 
-	viper.AddConfigPath(".")
-	viper.SetConfigName("infracon")
-	viper.SetConfigType("yaml")
-	viper.Set(key, value)
+	home, _ := os.UserHomeDir()
+	dirInfo, _ := os.Stat(".")
+	stat := dirInfo.Sys().(*syscall.Stat_t)
 
-	if _, err := os.Stat("infracon.yml"); os.IsNotExist(err) {
-		viper.SafeWriteConfig()
-		return
+	// string(unint64) won't work cos it returns the first digit to rune
+	inoNoToString := strconv.FormatUint(stat.Ino, 10)
+	directoryPath := filepath.Join(home, ".infracon-app-configs")
+	configFilePath := filepath.Join(directoryPath, inoNoToString+".yaml")
+
+	if _, err := os.Stat(directoryPath); os.IsNotExist(err) {
+		os.MkdirAll(directoryPath, 0755)
+		os.Create(configFilePath)
 	}
 
-	viper.WriteConfig()
+	viper.SetConfigFile(configFilePath)
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("Error reading config file: infracon.yaml", err)
+	}
+
+	viper.Set(key, value)
+
+	if err := viper.WriteConfig(); err != nil {
+		log.Fatal(err)
+	}
 
 }
