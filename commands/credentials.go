@@ -81,8 +81,10 @@ func setProjectCredentials(key, value string) {
 	dirInfo, _ := os.Stat(".")
 	stat := dirInfo.Sys().(*syscall.Stat_t)
 
+	//Inode Number: This will serve as the unique identifier for a folder
+	inoNo := stat.Ino
 	// string(unint64) won't work cos it returns the first digit to rune
-	inoNoToString := strconv.FormatUint(stat.Ino, 10)
+	inoNoToString := strconv.FormatUint(inoNo, 10)
 	directoryPath := filepath.Join(home, ".infracon-app-configs")
 	configFilePath := filepath.Join(directoryPath, inoNoToString+".yaml")
 
